@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+source tools/aux/functions
+
+ensure_postgres_container_running
+until is_postgres_container_ready ; do
+    echo "waiting for postgres container..."
+    sleep 2
+done
+
+if does_app_image_exist ; then
+    echo "skipping app image (re)build"
+else
+    build_app_image
+fi
+
+ensure_app_container_running

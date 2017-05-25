@@ -22,6 +22,18 @@ function ensure_postgres_container_running {
     fi
 }
 
+function ensure_app_container_running {
+    if does_container_exist $CONTAINER_NAME ; then
+        if is_container_running $CONTAINER_NAME ; then
+            echo "app container is already running"
+        else
+            start_app_container
+        fi
+    else
+        create_and_start_app_container
+    fi
+}
+
 function does_container_exist {
     local container_name=$1
     docker ps --all | grep -wq $container_name
@@ -69,13 +81,69 @@ function start_postgres_container {
 }
 
 function stop_postgres_container {
-    echo "stopping postgres container"
-    docker stop $PG_CONTAINER_NAME
+    if does_container_exist $PG_CONTAINER_NAME ; then
+        if is_container_running $PG_CONTAINER_NAME ; then
+            echo "stopping postgres container"
+            docker stop $PG_CONTAINER_NAME
+        fi
+    fi
 }
 
 function destroy_postgres_container {
-    echo "destroying postgres container"
-    docker rm $PG_CONTAINER_NAME
+    if does_container_exist $PG_CONTAINER_NAME ; then
+        if is_container_running $PG_CONTAINER_NAME ; then
+            stop_postgres_container
+        fi
+        echo "destroying postgres container"
+        docker rm $PG_CONTAINER_NAME
+    fi
+}
+
+function does_app_image_exist {
+    docker images | grep -wq $IMAGE_NAME
+}
+
+function build_app_image {
+    echo "building app image"
+    docker build -t $IMAGE_NAME .
+}
+
+function create_and_start_app_container {
+    echo "creating and starting app container"
+    docker run -it \
+        --name $CONTAINER_NAME \
+        --link $PG_CONTAINER_NAME:$PG_HOST \
+        --volume $(pwd):/app \
+        $IMAGE_NAME \
+        /bin/bash
+}
+
+function start_app_container {
+    echo "starting app container"
+    echo "to return, use the 'exit' command to close the shell"
+    echo
+    echo
+
+    docker start $CONTAINER_NAME
+}
+
+function stop_app_container {
+    if does_container_exist $CONTAINER_NAME ; then
+        if is_container_running $CONTAINER_NAME ; then
+            echo "stopping app container"
+            docker stop $CONTAINER_NAME
+        fi
+    fi
+}
+
+function destroy_app_container {
+    if does_container_exist $CONTAINER_NAME ; then
+        if is_container_running $CONTAINER_NAME ; then
+            stop_app_container
+        fi
+        echo "destroying app container"
+        docker rm $CONTAINER_NAME
+    fi
 }
 
 function run_db_script {

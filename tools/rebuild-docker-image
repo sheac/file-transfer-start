@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+source tools/aux/functions
+
+destroy_app_container
+build_app_image
