@@ -1,3 +1,13 @@
 #!/usr/bin/env bash
 
-database/clear-events-table.sh
+source tools/aux/functions
+
+ensure_postgres_container_running
+until is_postgres_container_ready ; do
+    echo "waiting for postgres container..."
+    sleep 2
+done
+
+run_db_script database/clear-events-table.sh
+
+stop_postgres_container

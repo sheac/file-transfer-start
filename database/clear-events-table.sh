@@ -39,4 +39,4 @@ echo "Table name is: $table"
 
 echo
 
-psql $database -c "TRUNCATE $table RESTART IDENTITY;"
+psql -h postgreshost -U postgres $database -c "TRUNCATE $table RESTART IDENTITY;"

@@ -39,4 +39,4 @@ echo "Table name is: $table"
 
 echo
 
-psql $database -c "SELECT * FROM $table"
+psql -h postgreshost -U postgres $database -c "SELECT * FROM $table"

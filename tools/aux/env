@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+export TRUE=0
+
+export IMAGE_NAME=filetransferstart_img
+export CONTAINER_NAME=filetransferstart_ctr
+
+export PG_VOL_PATH=/var/lib/postgres
+export PG_VOL_DIR=data
+
+export PG_IMAGE_NAME=postgres
+export PG_CONTAINER_NAME=filetransferstart_postgres_ctr
+
+export PG_HOST=postgreshost
