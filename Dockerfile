@@ -15,3 +15,6 @@ WORKDIR app
 COPY ./Gemfile ./
 COPY ./install_gems.sh ./
 RUN ./install_gems.sh
+
+COPY ./docker-utils ./docker-utils
+ENTRYPOINT ["./docker-utils/entrypoint.sh"]
